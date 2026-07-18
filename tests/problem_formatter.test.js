@@ -16,6 +16,14 @@ vm.runInNewContext(`${html.slice(start, end)}; this.formatTeX = formatTeX;`, con
 const model = context.formatTeX(String.raw`GPT Pro 5.6 (\emph{gpt-5-6-pro}).`);
 assert.equal(model, '<p>GPT Pro 5.6 (<em>gpt-5-6-pro</em>).</p>');
 
+const attack = fs.readFileSync('attacks/erdos/gpt_pro_5.6/5.tex', 'utf8');
+const modelMetadata = attack.match(/^\\item (\\textbf\{Model:\}.+)$/m);
+assert.ok(modelMetadata, 'Problem 5 must include model metadata');
+
+const renderedModelMetadata = context.formatTeX(modelMetadata[1]);
+assert.match(renderedModelMetadata, /<strong>Model:<\/strong> GPT Pro 5\.6 \(model slug: gpt-5-6-pro\)\./);
+assert.doesNotMatch(renderedModelMetadata, /\$/);
+
 const source = context.formatTeX(String.raw`Source: (\url{https://example.com/a}).`);
 assert.equal(source, '<p>Source: (<a href="https://example.com/a" target="_blank">https://example.com/a</a>).</p>');
 assert.equal((source.match(/<a\b/g) || []).length, 1);
