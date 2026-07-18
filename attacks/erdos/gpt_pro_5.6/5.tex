@@ -4,7 +4,7 @@
 
 \begin{itemize}
 \item \textbf{Model:} GPT Pro 5.6 (\emph{gpt-5-6-pro}).
-\item \textbf{Source conversation:} \url{https://chatgpt.com/share/6a5932bb-bfb0-83ea-a0ea-e3eaf074fda1}.
+\item \textbf{Source conversations:} initial response at \url{https://chatgpt.com/share/6a5932bb-bfb0-83ea-a0ea-e3eaf074fda1}; updated continuation at \url{https://chatgpt.com/share/6a5ad95a-1b2c-83ea-8e1b-61acf662e80c}.
 \item \textbf{Prompt strategy:} research-mathematician and adversarial proof-checker mode, with web research, computation, a Lean-oriented formalization request, and a follow-up request to theorize a potential solution.
 \item \textbf{Claimed status:} UNRESOLVED.
 \end{itemize}
@@ -838,3 +838,715 @@ A proof of the relative sifted block-correlation lemma would complete the origin
 
 \textbf{LABEL: UNRESOLVED}
 \textbf{SUBLABEL: CONCRETE TWO-BLOCK ROUGH-FOURIER SIEVE PROGRAM WITH AN EXACT CONDITIONAL REDUCTION, A NEW \(N^{1/4}\) PRIME FILTER, AND COMPUTATIONAL VALIDATION}
+
+\medskip
+\medskip
+
+\section*{Continuation: Two New Exact Reductions}
+
+The full conjecture is still unresolved. The latest work has nevertheless produced two useful advances:
+
+\begin{enumerate}
+\item a \textbf{sharp deterministic barrier theorem} showing that no rearrangement or reweighting of Merikoski-style candidate clusters can evade the constant \(2\) using occupancy information alone;
+\item a \textbf{four-channel identity}
+\[
+PP=PR+RP-RR+SS
+\]
+that improves the earlier Bonferroni reduction by restoring the positive semiprime--semiprime channel.
+\end{enumerate}
+
+The second point gives the most promising analytic route developed so far.
+
+\subsection*{1. A sharp sequential target-window barrier}
+
+Fix
+
+\[
+0<a\le b
+\]
+
+and arbitrary real candidate locations
+
+\[
+x_1<x_2<\cdots<x_M.
+\]
+
+Call a subsequence \(x_{i_1}<\cdots<x_{i_L}\) \textbf{target-free} when
+
+\[
+x_{i_{j+1}}-x_{i_j}\notin[a,b]
+\]
+
+for every consecutive pair in the subsequence.
+
+\paragraph{Theorem 1}
+
+Every \(M\)-point configuration has a target-free subsequence of length at least
+
+\[
+\boxed{
+\left\lceil
+\frac{M}{\lfloor b/a\rfloor+1}
+\right\rceil.
+}
+\tag{1}
+\]
+
+\paragraph{Proof}
+
+For every \(j\), define recursively
+
+\[
+\ell_j
+:=
+1+
+\max\left(
+\{\ell_i:i<j,\ x_j-x_i\notin[a,b]\}\cup\{0\}
+\right).
+\]
+
+Then \(\ell_j\) is the maximum length of a target-free subsequence ending at \(x_j\).
+
+Suppose that \(i<j\) and
+
+\[
+\ell_i=\ell_j.
+\]
+
+We must have
+
+\[
+x_j-x_i\in[a,b].
+\]
+
+Indeed, if the difference lay outside \([a,b]\), then \(x_i\) would be an allowable predecessor of \(x_j\), yielding
+
+\[
+\ell_j\ge\ell_i+1,
+\]
+
+a contradiction.
+
+Consider one level set
+
+\[
+\{x_j:\ell_j=r\}.
+\]
+
+If its elements in increasing order are
+
+\[
+y_1<\cdots<y_q,
+\]
+
+then every pairwise difference lies in \([a,b]\). In particular,
+
+\[
+y_{t+1}-y_t\ge a
+\]
+
+for every \(t\), while
+
+\[
+y_q-y_1\le b.
+\]
+
+Therefore
+
+\[
+(q-1)a
+\le y_q-y_1
+\le b,
+\]
+
+so
+
+\[
+q\le\lfloor b/a\rfloor+1.
+\]
+
+If \(L=\max_j\ell_j\), there are \(L\) nonempty level sets, each containing at most \(\lfloor b/a\rfloor+1\) points. Hence
+
+\[
+M\le L\bigl(\lfloor b/a\rfloor+1\bigr),
+\]
+
+which proves (1). ∎
+
+\paragraph{Narrow target windows}
+
+For the normalized-gap window
+
+\[
+[a,b]=[C-\eta,C+\eta],
+\]
+
+if
+
+\[
+0<\eta<\frac C3,
+\]
+
+then
+
+\[
+C+\eta<2(C-\eta),
+\]
+
+and therefore
+
+\[
+\lfloor b/a\rfloor+1=2.
+\]
+
+Theorem 1 gives a target-free subsequence of size at least
+
+\[
+\boxed{\left\lceil\frac M2\right\rceil.}
+\tag{2}
+\]
+
+This is sharp. Choose an arithmetic progression
+
+\[
+x_j=jc
+\]
+
+with
+
+\[
+c\in[a,b],
+\qquad
+2c>b.
+\]
+
+Adjacent points have forbidden target distance \(c\), but every second point forms a target-free subsequence. Its maximum size is exactly \(\lceil M/2\rceil\).
+
+\subsection*{2. Weighted strengthening}
+
+Give the candidate locations arbitrary nonnegative weights
+
+\[
+w_1,\ldots,w_M.
+\]
+
+Form a directed graph whose vertices are the locations and in which, for \(i<j\), there is an arc \(i\to j\) precisely when
+
+\[
+x_j-x_i\notin[a,b].
+\]
+
+A directed path is exactly a target-free subsequence.
+
+A stable set in this digraph consists of points whose pairwise differences all belong to \([a,b]\). By the preceding span argument, its size is at most
+
+\[
+Q:=\lfloor b/a\rfloor+1.
+\]
+
+The Gallai--Milgram theorem partitions the vertices of a finite digraph with stability number at most \(Q\) into at most \(Q\) directed paths. The path weights sum to the total vertex weight, so one path has weight at least
+
+\[
+\boxed{
+\frac1Q\sum_{i=1}^{M}w_i.
+}
+\tag{3}
+\]
+
+For a narrow target window, \(Q=2\). Thus even with completely arbitrary importance weights, there exists a target-free collection carrying at least half the total weight.
+
+\paragraph{Consequence for the \(A=2\) threshold}
+
+In the Merikoski concentration architecture, a pair-correlation constant \(A\) leads, schematically, to \(r+1\) occupied clusters among approximately \(Ar+1\) candidates. When \(A\ge2\), this is no more than half of the candidates asymptotically.
+
+Theorems 1 and (3) therefore show:
+
+\begin{quote}
+\textbf{No argument that retains only the number or total weight of occupied clusters can force a consecutive occupied pair in an arbitrarily narrow target window unless it crosses below \(A=2\).} (4)
+\end{quote}
+
+This eliminates several possible evasions:
+
+\begin{itemize}
+\item changing the candidate-cluster geometry;
+\item introducing arbitrary nonnegative cluster weights;
+\item duplicating clusters;
+\item replacing a path by an odd-cycle construction;
+\item obtaining only \(A=2+o(1)\) from above.
+\end{itemize}
+
+A successful \(A\ge2\) argument must retain additional arithmetic information, not merely occupancy data.
+
+\subsection*{3. The four-channel endpoint identity}
+
+The earlier pair-rough Bonferroni inequality was
+
+\[
+PP\ge PR+RP-RR.
+\]
+
+It discards a positive and potentially substantial channel. That channel can be restored exactly.
+
+Choose a roughness cutoff \(z\) such that
+
+\[
+z^3>3X.
+\]
+
+For integers \(m\in[X,3X]\), define
+
+\[
+R(m)
+:=
+1_{\{p\mid m\Rightarrow p>z\}},
+\qquad
+P(m):=1_{\mathbb P}(m).
+\]
+
+Every \(z\)-rough integer in this range has at most two prime factors. Therefore
+
+\[
+S(m):=R(m)-P(m)
+\]
+
+is exactly the indicator of the \(z\)-rough semiprimes. Pointwise,
+
+\[
+R=P+S.
+\tag{5}
+\]
+
+For two endpoints, abbreviate
+
+\[
+PP=P_1P_2,
+\qquad
+PS=P_1S_2,
+\qquad
+SP=S_1P_2,
+\qquad
+SS=S_1S_2.
+\]
+
+Then
+
+\[
+PR=P_1R_2=PP+PS,
+\]
+
+\[
+RP=R_1P_2=PP+SP,
+\]
+
+and
+
+\[
+RR=R_1R_2=PP+PS+SP+SS.
+\]
+
+Subtracting gives the exact pointwise identity
+
+\[
+\boxed{
+PP=PR+RP-RR+SS.
+}
+\tag{6}
+\]
+
+It remains exact after multiplication by arbitrary nonnegative weights and summation over arbitrary \(n\) and shifts \(h\).
+
+\subsection*{4. Why this improves the Bonferroni route}
+
+The previous lower bound was
+
+\[
+PR+RP-RR.
+\]
+
+Using the channel decomposition,
+
+\[
+PR+RP-RR=PP-SS.
+\tag{7}
+\]
+
+Thus the Bonferroni expression tries to prove positivity only after subtracting all false-positive semiprime pairs. This explains why its one-sided marginal thresholds remained so severe.
+
+The exact identity restores those pairs:
+
+\[
+PP=(PP-SS)+SS.
+\]
+
+This does not eliminate parity. It isolates the missing parity-sensitive contribution as the explicit bilinear channel \(SS\).
+
+\subsection*{5. A rigorous four-channel sufficient condition}
+
+Let \(M_X>0\) be a common reference main term. Suppose that, over the target shift interval and with the Erdős--Rankin/Maynard weights, one proves
+
+\[
+PR\ge(\ell_1+o(1))M_X,
+\tag{8}
+\]
+
+\[
+RP\ge(\ell_2+o(1))M_X,
+\tag{9}
+\]
+
+\[
+RR\le(u+o(1))M_X,
+\tag{10}
+\]
+
+and
+
+\[
+SS\ge(s+o(1))M_X.
+\tag{11}
+\]
+
+Then (6) gives
+
+\[
+PP
+\ge
+\bigl(\ell_1+\ell_2-u+s+o(1)\bigr)M_X.
+\]
+
+Consequently,
+
+\[
+\boxed{
+\ell_1+\ell_2-u+s>0
+\quad\Longrightarrow\quad
+PP>0
+}
+\tag{12}
+\]
+
+for all sufficiently large \(X\).
+
+If the shifts lie in
+
+\[
+[(C-\eta)\log X,(C+\eta)\log X]
+\]
+
+and the covering forces all other intermediate positions to be composite, positivity of \(PP\) supplies consecutive primes with normalized gap in
+
+\[
+[C-\eta+o(1),C+\eta+o(1)].
+\]
+
+A diagonal choice \(\eta\to0\) proves the original assertion for \(C\).
+
+Thus (8)--(12), together with the covering construction, are a complete conditional reduction.
+
+\subsection*{6. Ideal-model threshold}
+
+Suppose the rough semiprime class has normalized density \(\sigma\) relative to primes. The local independent model predicts
+
+\[
+PP:PS:SP:SS
+=
+1:\sigma:\sigma:\sigma^2.
+\]
+
+Therefore
+
+\[
+PR=RP=1+\sigma,
+\]
+
+\[
+RR=(1+\sigma)^2,
+\]
+
+and
+
+\[
+SS=\sigma^2.
+\]
+
+Suppose the two prime--rough lower bounds retain a proportion \(\kappa\) of their predicted main terms, while \(RR\) and \(SS\) have their predicted asymptotics. Condition (12) becomes
+
+\[
+2\kappa(1+\sigma)
+-(1+\sigma)^2
++\sigma^2
+>0.
+\]
+
+Since
+
+\[
+(1+\sigma)^2-\sigma^2=1+2\sigma,
+\]
+
+this is equivalent to
+
+\[
+\boxed{
+\kappa>
+\frac{1+2\sigma}{2(1+\sigma)}.
+}
+\tag{13}
+\]
+
+This threshold is strictly below \(1\), and it is substantially less restrictive than the earlier Bonferroni threshold because the \(SS\) contribution is no longer thrown away.
+
+For example:
+
+\[
+\begin{array}{c|c}
+\sigma&\text{required }\kappa\\ \hline
+0.25&0.6000\\
+0.40&0.642857\\
+0.50&0.666667\\
+0.70&0.705882\\
+1.00&0.7500
+\end{array}
+\]
+
+These are ideal-model calculations. A proof must include the correct local singular series and the actual weighted-sieve constants.
+
+\subsection*{7. Finite exact experiment}
+
+I computed all four channels for
+
+\[
+X=5{,}000{,}000,
+\qquad
+C=1,
+\qquad
+\eta=0.25,
+\]
+
+using the even shifts
+
+\[
+12,14,16,18.
+\]
+
+For effective roughness exponent
+
+\[
+\alpha=0.348480\ldots,\qquad z=216,
+\]
+
+the exact counts were
+
+\[
+\begin{array}{c|r}
+\text{channel}&\text{count}\\ \hline
+PP&163682\\
+PS&105783\\
+SP&105712\\
+SS&68232\\
+PR&269465\\
+RP&269394\\
+RR&443406
+\end{array}
+\]
+
+and indeed
+
+\[
+269465+269394-443406+68232
+=
+163682.
+\]
+
+Relative to \(PP\),
+
+\[
+\frac{PR}{PP}=1.646271\ldots,
+\]
+
+\[
+\frac{RP}{PP}=1.645838\ldots,
+\]
+
+\[
+\frac{RR}{PP}=2.708966\ldots,
+\]
+
+and
+
+\[
+\frac{SS}{PP}=0.416857\ldots.
+\]
+
+The semiprime-pair correction is therefore not numerically negligible.
+
+At the larger effective roughness exponent \(0.439983\ldots\), the measured ratios were
+
+\[
+\frac{PR}{PP}=1.275944\ldots,
+\qquad
+\frac{RR}{PP}=1.628261\ldots,
+\qquad
+\frac{SS}{PP}=0.075891\ldots.
+\]
+
+Again, the four-channel recombination was exact.
+
+These computations are diagnostics only. They do not prove a limiting formula.
+
+\subsection*{8. Division of the analytic work}
+
+The identity suggests splitting the proof among three kinds of estimates.
+
+\paragraph{Channel \(RR\): rough--rough}
+
+This should be the most accessible channel. It is a two-dimensional rough-sieve correlation and requires a relative upper asymptotic with the correct local factors.
+
+\paragraph{Channels \(PR\) and \(RP\): prime--rough}
+
+These are Chen-type one-prime lower-bound problems. Ford--Maynard's theory gives a systematic framework for deciding when Type-I and Type-II information suffices to produce primes in a weighted sequence, and it proves that genuinely nontrivial Type-II information is indispensable.
+
+\paragraph{Channel \(SS\): semiprime--semiprime}
+
+This channel has genuine bilinear structure. Results on correlations of restricted \(E_2\)-numbers demonstrate that semiprime correlations can be evaluated much farther than prime-pair correlations when one prime factor is localized.
+
+The present limitation is the shift range. Available restricted-\(E_2\) correlation asymptotics reach almost all shifts when the averaging range is at least roughly
+
+\[
+H\ge(\log X)^{19+\varepsilon},
+\]
+
+while prime--\(E_2\) correlations require ranges as large as
+
+\[
+H\ge X^{1/6+\varepsilon}.
+\]
+
+The normalized-gap problem needs only
+
+\[
+H\asymp\eta\log X.
+\]
+
+Thus the \(SS\) theory is about eighteen logarithmic powers away, while the \(PR\) theory is much farther away in its currently published averaged form.
+
+\subsection*{9. A promising new external ingredient}
+
+Grimmelt and Teräväinen's 2025 work constructs a nonnegative approximation to Chen-prime sieve weights and proves that, in suitable additive problems, primes can be approximated by a power-sifted Cramér rough-number model. Their proof uses a power-saving Bombieri--Vinogradov theorem and a physical-space approximation principle.
+
+This is unusually close in spirit to the four-channel program:
+
+\begin{itemize}
+\item it uses nonnegative Chen-type models;
+\item it replaces primes by rough numbers while preserving additive structure;
+\item it works with power-size roughness cutoffs;
+\item it keeps track of large-sieve and exceptional-zero errors.
+\end{itemize}
+
+However, their theorem concerns additive convolutions outside a power-saving exceptional set. It does not provide the relative, divisor-weighted, uniform estimate for every logarithmic target interval required here. A power-saving global exceptional set could still contain all \(O(\log X)\) target shifts.
+
+The useful research question is therefore not whether their theorem applies verbatim---it does not---but whether their \textbf{physical-space approximation mechanism} can be inserted into the Maynard/Erdős--Rankin target-shift average before the shift variable is specialized.
+
+\subsection*{10. Current leading theorem to prove}
+
+The most focused target is now the following.
+
+\begin{quote}
+\textbf{Four-channel endpoint theorem.}
+For every fixed \(C>0\) and \(\eta>0\), construct a modified Erdős--Rankin covering, a set of even shifts
+\[
+\mathcal H_X\subset[(C-\eta)\log X,(C+\eta)\log X],
+\]
+and nonnegative Maynard-type weights such that the four weighted channels satisfy
+\[
+PR\ge(\ell_1+o(1))M_X,
+\]
+\[
+RP\ge(\ell_2+o(1))M_X,
+\]
+\[
+RR\le(u+o(1))M_X,
+\]
+\[
+SS\ge(s+o(1))M_X,
+\]
+with
+\[
+\ell_1+\ell_2-u+s>0.
+\]
+\end{quote}
+
+This theorem would solve the original problem by the exact identity and covering argument.
+
+The most likely division of techniques is:
+
+\[
+\begin{array}{c|c}
+\text{channel}&\text{proposed machinery}\\ \hline
+RR&\text{beta/Buchstab rough sieve}\\
+PR,RP&\text{Chen sieve plus Ford--Maynard Type II}\\
+SS&\text{bilinear dispersion for restricted semiprimes}\\
+\text{local errors}&\text{smooth or well-factorable moduli}\\
+\text{consecutiveness}&\text{modified Erdős--Rankin covering}
+\end{array}
+\]
+
+The new structural insight is that the proof does \textbf{not} need to derive the entire prime-pair lower bound from the prime--rough marginals. It can recover the missing false-positive mass through a separately tractable semiprime--semiprime channel.
+
+\subsection*{11. Adversarial verification}
+
+\paragraph{Exactness of \(R=P+S\)}
+
+The condition \(z^3>3X\) is essential. Without it, a \(z\)-rough integer could have three or more prime factors, and \(S\) would not be a pure semiprime indicator.
+
+\paragraph{Singular-series dependence}
+
+The ideal constants \(1,\sigma,\sigma,\sigma^2\) cannot be inserted directly into a proof. Every channel has local correlations depending on the shift. They must be normalized or combined with their correct singular-series factors.
+
+\paragraph{Relative errors}
+
+An error \(o(X)\) is insufficient. The desired prime-pair main term over a logarithmic shift window is sparse. Each error must be \(o(M_X)\), where \(M_X\) is the actual weighted rough-pair scale.
+
+\paragraph{Exceptional-shift theorems}
+
+An estimate valid for almost all shifts in a much larger interval does not guarantee a good shift in every prescribed interval of length \(O(\log X)\).
+
+\paragraph{Count-only alternatives}
+
+The sequential barrier proves that no candidate-placement trick can replace the arithmetic estimates. The constant \(2\) is a genuine transition for the concentration architecture, not an artifact of equally spaced clusters.
+
+\subsection*{Artifacts}
+
+\begin{itemize}
+\item \emph{Four-channel research note} (archival source path: sandbox:/mnt/data/four_channel_endpoint_reduction.md)
+\item \emph{Four-channel experiment code} (archival source path: sandbox:/mnt/data/four_channel_endpoint_experiment.py)
+\item \emph{Exact channel counts} (archival source path: sandbox:/mnt/data/four_channel_endpoint_counts.csv)
+\item \emph{Complete experiment results} (archival source path: sandbox:/mnt/data/four_channel_endpoint_results.json)
+\item \emph{Four-channel plot} (archival source path: sandbox:/mnt/data/four_channel_endpoint_channels.png)
+\item \emph{Lean four-channel identities} (archival source path: sandbox:/mnt/data/PrimeGap_FourChannel_Identity.lean)
+\item \emph{Sequential target-window theorem} (archival source path: sandbox:/mnt/data/sequential_target_window_barrier.md)
+\item \emph{Sequential-barrier verification code} (archival source path: sandbox:/mnt/data/sequential_target_window_barrier.py)
+\item \emph{Sequential-barrier data} (archival source path: sandbox:/mnt/data/sequential_target_window_barrier.csv)
+\item \emph{Sequential-barrier plot} (archival source path: sandbox:/mnt/data/sequential_target_window_barrier.png)
+\item \emph{Lean sequential-barrier lemmas} (archival source path: sandbox:/mnt/data/PrimeGap_Sequential_Barrier.lean)
+\end{itemize}
+
+The Lean files contain no \emph{sorry}. They have not been kernel-checked because the current runtime does not provide a Lean executable.
+
+\subsection*{Final}
+
+\textbf{LABEL: UNRESOLVED}
+
+\textbf{SUBLABEL: COUNT-ONLY EVASIONS OF THE \(A=2\) BARRIER ARE NOW RULED OUT; THE FOUR-CHANNEL \(PP=PR+RP-RR+SS\) DECOMPOSITION IS THE STRONGEST CURRENT ROUTE}
+
+\subsection*{Citations}
+
+\begin{enumerate}
+\item The official Erdős Problems record continues to classify the normalized-prime-gap question as open and records the known initial interval, positive-measure, \(1/3\)-measure, and syndeticity results. (\url{https://www.erdosproblems.com/5})
+\item Merikoski proves the four-point limit-point theorem, the \(1/3\)-measure bound and syndeticity, obtains the weighted constant \(3.99\), and identifies \(A<2\) as sufficient for the full conjecture. (\url{https://arxiv.org/abs/1811.03008})
+\item Ford and Maynard develop the Type-I/Type-II prime-producing-sieve framework and prove that substantial Type-II information is necessary in general for nontrivial prime lower bounds. (\url{https://arxiv.org/abs/2407.14368})
+\item Evans proves averaged correlations for restricted products of two primes, with the shortest \(E_2\)--\(E_2\) shift range of logarithmic-power size and a much longer range for prime--\(E_2\) correlations. (\url{https://www.cambridge.org/core/journals/mathematical-proceedings-of-the-cambridge-philosophical-society/article/correlations-of-almost-primes/08F8E4E4C36F68ED6DDA373CCAF7A221})
+\item Grimmelt and Teräväinen construct a nonnegative model for Chen primes and approximate primes by a power-sifted Cramér rough-number model in additive problems, using power-saving Bombieri--Vinogradov input. (\url{https://arxiv.org/abs/2508.16400})
+\item The Gallai--Milgram theorem partitions the vertices of a finite digraph into at most its stability number many directed paths, which yields the weighted form of the sequential target-window barrier. (\url{https://www.combinatorics.org/ojs/index.php/eljc/article/view/v16i1n23})
+\item The uploaded literature report identifies prescribed-pair positivity and the \(A<2\) weighted prime-pair threshold as the central unresolved gap; its page-8 diagram summarizes the direct smooth-modulus/Chen/Ford--Maynard route. The report was supplied to the model in the source conversation and is not a repository file.
+\end{enumerate}

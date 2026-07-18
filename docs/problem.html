@@ -336,8 +336,31 @@
                 const lines = input.split('\n');
                 const out = [];
                 let inQuote = false;
+                let inDisplayMath = false;
 
                 for (const line of lines) {
+                    const trimmed = line.trim();
+                    const opensDisplay = trimmed === '\\[' || trimmed === '[' || trimmed === '$$'
+                        || /^\\begin\{(?:equation|align|gather|multline)\*?\}$/.test(trimmed);
+                    const closesDisplay = trimmed === '\\]' || trimmed === ']' || trimmed === '$$'
+                        || /^\\end\{(?:equation|align|gather|multline)\*?\}$/.test(trimmed);
+
+                    if (opensDisplay && !inDisplayMath) {
+                        if (inQuote) {
+                            out.push('\\end{quote}');
+                            inQuote = false;
+                        }
+                        out.push(line);
+                        inDisplayMath = true;
+                        continue;
+                    }
+
+                    if (inDisplayMath) {
+                        out.push(line);
+                        if (closesDisplay) inDisplayMath = false;
+                        continue;
+                    }
+
                     const match = line.match(/^\s*>\s?(.*)$/);
                     if (match) {
                         if (!inQuote) {
@@ -379,6 +402,13 @@
                 const mathCommandRe = /\\[a-zA-Z]+/;
 
                 function isMathSegment(segment) {
+                    // Formatting and link commands belong to prose even when their
+                    // contents contain digits or punctuation that resemble math.
+                    // Treating them as math produces literal dollar signs and
+                    // malformed anchors after the later HTML conversion pass.
+                    if (/\\(?:url|href|emph|textbf|textit|underline)\s*\{/.test(segment)) {
+                        return false;
+                    }
                     const hasCommand = mathCommandRe.test(segment);
                     const hasMathOps = /[_^=<>+\-*/]/.test(segment) || /\d/.test(segment);
                     let cleaned = segment;
@@ -718,8 +748,12 @@
             // Handle \href{url}{text}
             text = text.replace(/\\href\{([^}]+)\}\{([^}]+)\}/g, '<a href="$1" target="_blank">$2</a>');
 
-            // Convert plain URLs to clickable links (but not if already in an <a> tag)
-            text = text.replace(/(?<!href=")(https?:\/\/[^\s<>"{}|\\^\[\]`]+)/g, '<a href="$1" target="_blank">$1</a>');
+            // Convert plain URLs without re-linking the visible URL inside anchors
+            // already produced by \url or \href.
+            text = text.replace(/<a\b[^>]*>[\s\S]*?<\/a>|https?:\/\/[^\s<>"{}|\\^\[\]`]+/g, function(match) {
+                if (match.startsWith('<a')) return match;
+                return `<a href="${match}" target="_blank">${match}</a>`;
+            });
 
             // Replace LaTeX quotes with proper HTML entities
             text = text.replace(/``/g, '"');
